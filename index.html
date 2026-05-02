@@ -198,7 +198,7 @@
     }
     .hero-photo-wrap img {
       width: 100%; border-radius: 1.5rem; object-fit: cover;
-      border: 1px solid var(--border);
+      /* border: 1px solid var(--border); */
       filter: grayscale(20%);
     }
     .hero-photo-glow {
@@ -424,10 +424,117 @@
     /* ── UTILITIES ── */
     .reveal { opacity: 0; }
     .full-width-section { max-width: 100%; padding: 0; }
+    /* ── SCROLL PROGRESS BAR ── */
+#scrollProgress {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 0%;
+  background: var(--accent);
+  z-index: 9999;
+}
+.resume-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: rgba(180,255,57,0.1);
+  border: 1px solid rgba(180,255,57,0.4);
+  backdrop-filter: blur(10px);
+
+  color: var(--accent);
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  padding: 10px 14px;
+  border-radius: 30px;
+
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* hover effect */
+.resume-btn:hover {
+  background: var(--accent);
+  color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(180,255,57,0.4);
+}
+
+/* icon animation */
+.resume-btn i {
+  transition: transform 0.3s ease;
+}
+
+.resume-btn:hover i {
+  transform: translateY(2px);
+}
+/* ── SVG BACKGROUND ── */
+#bg-svg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.08;
+}
+
+#bg-svg * {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 6px rgba(180,255,57,0.4));
+}
+
+#bg-svg circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+/* ── MOBILE GSAP FIX ── */
+@media (max-width: 768px) {
+  .hero-photo-wrap {
+    transform: none !important;
+    position: relative;
+  }
+
+  #h-photo {
+    transform: none !important;
+  }
+}
   </style>
 </head>
 <body>
+<!-- SCROLL PROGRESS BAR -->
+<div id="scrollProgress"></div>
 
+<!-- SVG BACKGROUND -->
+<svg id="bg-svg" viewBox="0 0 1200 800" preserveAspectRatio="none">
+  <!-- circles -->
+  <circle cx="200" cy="300" r="120" />
+  <circle cx="900" cy="200" r="80" />
+  <circle cx="600" cy="600" r="100" />
+
+  <!-- lines -->
+  <line x1="100" y1="100" x2="400" y2="300" />
+  <line x1="800" y1="50" x2="1000" y2="400" />
+
+  <!-- rectangles -->
+  <rect x="300" y="500" width="120" height="120" rx="20" />
+  <rect x="950" y="500" width="80" height="80" rx="10" />
+
+  <!-- polygons -->
+  <polygon points="600,100 650,200 550,200" />
+  <polygon points="1000,600 1100,700 900,700" />
+</svg>
 <!-- LOADER -->
 <div id="loader">
   <canvas id="loader-canvas"></canvas>
@@ -836,7 +943,10 @@
   </div>
 </section>
 </div>
-
+<a href="resume.pdf" download class="resume-btn">
+  <i class="fas fa-download"></i>
+  <span>Resume</span>
+</a>
 <!-- ═══════════════════════════════════ CONTACT ═══════════════════════════════════ -->
 <section id="contact">
   <p class="section-label reveal-el">// Contact</p>
@@ -1003,7 +1113,7 @@ function fireHeroAnimations() {
 
   // Set initial states
   gsap.set(['#h-tag','#h-greet','#h-name','#h-sub','#h-btns'], { opacity: 0, y: 0 });
-  gsap.set('#h-photo', { opacity: 0, x: 0 });
+  gsap.set('#h-photo', { opacity: 1 });
   gsap.set('.hero-float', { opacity: 0 });
   gsap.set('#scrollHint', { opacity: 0 });
 
@@ -1018,10 +1128,53 @@ function fireHeroAnimations() {
     .from('#h-sub',  { y: 35, duration: 0.7 }, 0.75)
     .to('#h-btns',  { opacity: 1, duration: 0.6 }, 1.0)
     .from('#h-btns', { y: 25, duration: 0.6 }, 1.0)
-    .to('#h-photo', { opacity: 1, x: 0, duration: 0.9 }, 0.5)
-    .from('#h-photo',{ x: 50, duration: 0.9 }, 0.5)
     .to('.hero-float', { opacity: 1, duration: 1.2, stagger: 0.15 }, 1.1)
     .to('#scrollHint', { opacity: 1, duration: 0.8 }, 1.6);
+      /* ── SCROLL PROGRESS BAR ── */
+gsap.to("#scrollProgress", {
+  height: "100%",
+  ease: "none",
+  scrollTrigger: {
+    trigger: document.body,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+
+/* ── SVG BACKGROUND PARALLAX ── */
+gsap.to("#bg-svg", {
+  y: -150,
+  ease: "none",
+  scrollTrigger: {
+    trigger: document.body,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+gsap.from(".resume-btn", {
+  opacity: 0,
+  y: 50,
+  duration: 1,
+  delay: 0.5,
+  ease: "power3.out"
+});
+/* Individual circle motion */
+gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
+  gsap.to(circle, {
+    y: (i + 1) * -80,
+    x: (i % 2 === 0 ? 60 : -60),
+    ease: "none",
+    scrollTrigger: {
+      trigger: document.body,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true
+    }
+  });
+});
+
 
   // Floating elements parallax drift
   gsap.utils.toArray('.hero-float').forEach((el, i) => {
@@ -1034,7 +1187,46 @@ function fireHeroAnimations() {
       delay: i * 0.3,
     });
   });
+  const shapes = gsap.utils.toArray("#bg-svg *");
 
+// random float movement
+shapes.forEach((el, i) => {
+  gsap.to(el, {
+    x: "random(-120, 120)",
+    y: "random(-120, 120)",
+    duration: "random(6, 12)",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+
+  // rotation
+  gsap.to(el, {
+    rotation: "random(-180,180)",
+    duration: "random(10, 20)",
+    repeat: -1,
+    ease: "none"
+  });
+
+  // scale pulse
+  gsap.to(el, {
+    scale: "random(0.8, 1.3)",
+    duration: "random(4, 8)",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+});
+gsap.to("#bg-svg", {
+  y: -200,
+  ease: "none",
+  scrollTrigger: {
+    trigger: document.body,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
   // Scroll hint fade out on scroll
   ScrollTrigger.create({
     trigger: '#hero',
@@ -1157,6 +1349,44 @@ function initScrollAnimations() {
     tag.addEventListener('mouseenter', () => gsap.to(tag, { scale: 1.08, duration: 0.2, ease: 'back.out(3)' }));
     tag.addEventListener('mouseleave', () => gsap.to(tag, { scale: 1, duration: 0.2 }));
   });
+  /* ── SCROLL PROGRESS BAR ── */
+gsap.to("#scrollProgress", {
+  height: "100%",
+  ease: "none",
+  scrollTrigger: {
+    trigger: document.body,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+
+/* ── SVG BACKGROUND PARALLAX ── */
+gsap.to("#bg-svg", {
+  y: -150,
+  ease: "none",
+  scrollTrigger: {
+    trigger: document.body,
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true
+  }
+});
+
+/* Individual circle motion */
+gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
+  gsap.to(circle, {
+    y: (i + 1) * -80,
+    x: (i % 2 === 0 ? 60 : -60),
+    ease: "none",
+    scrollTrigger: {
+      trigger: document.body,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true
+    }
+  });
+});
 }
 
 // closeMobile needed for mobile menu links
