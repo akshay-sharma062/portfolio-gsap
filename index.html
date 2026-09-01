@@ -341,14 +341,20 @@
     }
     .project-card:hover { border-color: rgba(180,255,57,.35); transform: translateY(-6px); }
     .project-thumb {
-      height: 180px; display: flex; align-items: center; justify-content: center;
+      height: 180px; display: flex; align-items: flex-end; justify-content: flex-start;
       font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
-      color: rgba(255,255,255,.15); letter-spacing: -1px; position: relative; overflow: hidden;
+      color: #fff; letter-spacing: -1px; position: relative; overflow: hidden;
     }
-    .project-thumb span { position: relative; z-index: 1; }
+    .project-thumb img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      object-position: top center; filter: grayscale(15%) contrast(1.05) brightness(.9);
+      transition: transform .6s ease, filter .6s ease;
+    }
+    .project-card:hover .project-thumb img { transform: scale(1.08); filter: grayscale(0%) contrast(1.05) brightness(1); }
+    .project-thumb span { position: relative; z-index: 1; padding: .9rem 1rem; }
     .project-thumb::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent 50%, var(--bg3));
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,0) 40%, rgba(10,10,10,.92) 100%);
     }
     .project-body { padding: 1.4rem; flex: 1; display: flex; flex-direction: column; }
     .project-type { font-size: .75rem; color: var(--txt2); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
@@ -368,6 +374,52 @@
     }
     .project-link:hover { color: var(--accent); }
     .project-link.primary { color: var(--accent); }
+
+    /* ── AUTOMATION ── */
+    .automation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+    .automation-card {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 1.2rem;
+      padding: 1.8rem; transition: border-color .3s, transform .35s;
+      position: relative; overflow: hidden;
+    }
+    .automation-card:hover { border-color: rgba(180,255,57,.35); transform: translateY(-6px); }
+    @property --angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    .automation-card::before {
+      content: ''; position: absolute; z-index: 0; inset: -2px; border-radius: 1.3rem;
+      padding: 2px;
+      background: conic-gradient(from var(--angle,0deg), transparent 0%, rgba(180,255,57,.7) 12%, transparent 26%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      opacity: 0; transition: opacity .5s ease;
+      pointer-events: none;
+    }
+    .automation-card.in-view::before { opacity: 1; animation: spinGlow 3.5s linear infinite; }
+    @keyframes spinGlow { to { --angle: 360deg; } }
+    .automation-card > * { position: relative; z-index: 1; }
+    .automation-card .automation-flow .step { display: inline-block; }
+    .automation-flow {
+      display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+      font-size: .78rem; color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700;
+      margin-bottom: 1.2rem;
+    }
+    .automation-flow .step {
+      background: rgba(180,255,57,.07); border: 1px solid rgba(180,255,57,.15);
+      padding: .3rem .7rem; border-radius: .3rem; color: var(--txt);
+    }
+    .automation-flow .arrow { color: var(--accent); font-size: .9rem; }
+    .automation-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--txt); margin-bottom: .8rem; }
+    .automation-points { list-style: none; margin-bottom: 1.2rem; }
+    .automation-points li {
+      color: var(--txt2); font-size: .9rem; line-height: 1.7; padding-left: 1.2rem;
+      position: relative; margin-bottom: .45rem;
+    }
+    .automation-points li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+    .automation-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .automation-tag {
+      font-size: .72rem; background: rgba(180,255,57,.07);
+      border: 1px solid rgba(180,255,57,.15); color: var(--accent);
+      padding: .2rem .6rem; border-radius: .25rem;
+    }
 
     /* ── CONTACT ── */
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
@@ -510,6 +562,12 @@
     transform: none !important;
   }
 }
+
+/* ── MAGNETIC BUTTONS ── */
+.magnetic { position: relative; will-change: transform; }
+
+/* ── PROJECT CARD TILT ── */
+.project-card, .automation-card { transform-style: preserve-3d; will-change: transform; }
   </style>
 </head>
 <body>
@@ -561,6 +619,7 @@
   <a href="#skills" onclick="closeMobile()">Skills</a>
   <a href="#experience" onclick="closeMobile()">Experience</a>
   <a href="#projects" onclick="closeMobile()">Work</a>
+  <a href="#automation" onclick="closeMobile()">Automation</a>
   <a href="#contact" onclick="closeMobile()">Contact</a>
 </div>
 
@@ -572,6 +631,7 @@
     <li><a href="#skills">Skills</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Work</a></li>
+    <li><a href="#automation">Automation</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -591,8 +651,8 @@
         I build fast, animated, pixel-perfect web experiences — from Figma handoffs to live deployment on Vercel &amp; Netlify.
       </p>
       <div class="hero-btns reveal" id="h-btns">
-        <a href="#projects" class="btn-primary">View My Work <i class="fas fa-arrow-down"></i></a>
-        <a href="#contact" class="btn-outline">Let's Talk <i class="fas fa-paper-plane"></i></a>
+        <a href="#projects" class="btn-primary magnetic">View My Work <i class="fas fa-arrow-down"></i></a>
+        <a href="#contact" class="btn-outline magnetic">Let's Talk <i class="fas fa-paper-plane"></i></a>
       </div>
     </div>
 
@@ -643,6 +703,10 @@
       <span class="marquee-sep">✦</span>
       <span class="marquee-item">Vercel</span>
       <span class="marquee-sep">✦</span>
+      <span class="marquee-item">Google Apps Script</span>
+      <span class="marquee-sep">✦</span>
+      <span class="marquee-item">Pabbly Connect</span>
+      <span class="marquee-sep">✦</span>
     </div>
   </div>
 </div>
@@ -660,7 +724,7 @@
       <p class="about-text reveal-el">
         I'm a <strong>Full Stack Developer</strong> based in Jaipur, India — passionate about crafting immersive web experiences that blend performance with beautiful design. I've worked across <strong>e-commerce, SaaS, and marketing pages</strong>, turning Figma designs into pixel-perfect, production-ready code.
         <br/><br/>
-        From building <strong>Shopify storefronts</strong> with custom Liquid code to engineering scroll-based GSAP animations and full-stack apps with <strong>Next.js and MongoDB</strong> — I bring ideas to life across the entire stack.
+        From building <strong>Shopify storefronts</strong> with custom Liquid code to engineering scroll-based GSAP animations and full-stack apps with <strong>Next.js and MongoDB</strong> — I bring ideas to life across the entire stack. Lately I've also been building <strong>workflow automations</strong> that connect APIs, spreadsheets, and email delivery into reliable, hands-off systems.
       </p>
       <div class="stats-row">
         <div class="stat-card reveal-el">
@@ -672,7 +736,7 @@
           <div class="stat-lbl">Client Projects</div>
         </div>
         <div class="stat-card reveal-el">
-          <div class="stat-num" data-count="6">0</div>
+          <div class="stat-num" data-count="7">0</div>
           <div class="stat-lbl">Live Deployments</div>
         </div>
       </div>
@@ -726,6 +790,17 @@
     </div>
 
     <div class="skill-card reveal-el">
+      <div class="skill-cat">Automation</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Google Apps Script</span>
+        <span class="skill-tag">Google Sheets</span>
+        <span class="skill-tag">Pabbly Connect</span>
+        <span class="skill-tag">Meta Ads API</span>
+        <span class="skill-tag">API Integration</span>
+      </div>
+    </div>
+
+    <div class="skill-card reveal-el">
       <div class="skill-cat">Tools &amp; Deployment</div>
       <div class="skill-tags">
         <span class="skill-tag">Git</span>
@@ -759,6 +834,18 @@
   <div class="section-divider reveal-el"></div>
 
   <div class="timeline">
+
+    <div class="timeline-item reveal-el">
+      <div class="timeline-dot"></div>
+      <div class="tl-date">Aug 2026 – Present</div>
+      <div class="tl-role">AI Generalist</div>
+      <div class="tl-company">Foremost Leads · Jaipur, India</div>
+      <ul class="tl-points">
+        <li>Built a multi-client daily ad reporting system across 13 client accounts — integrating Meta Ads data and Flexi lead data with complete client-wise isolation.</li>
+        <li>Automated an end-to-end certificate generation and delivery workflow using Google Forms, Sheets, Apps Script, and Pabbly Connect.</li>
+        <li>Designed scalable Google Apps Script + Pabbly Connect pipelines for API integration, data processing, and automated email delivery.</li>
+      </ul>
+    </div>
 
     <div class="timeline-item reveal-el">
       <div class="timeline-dot"></div>
@@ -821,6 +908,7 @@
     <!-- 1: Imperial Essence -->
     <div class="project-card reveal-el">
       <div class="project-thumb" style="background: linear-gradient(135deg,#2a1a00,#1a0d00);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Fimperial-essence-k-c.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Imperial Essence live site preview" loading="lazy" />
         <span>Imperial Essence</span>
       </div>
       <div class="project-body">
@@ -839,9 +927,31 @@
       </div>
     </div>
 
-    <!-- 2: Hungry Tiger -->
+    <!-- 2: Craftlab -->
+    <div class="project-card reveal-el">
+      <div class="project-thumb" style="background: linear-gradient(135deg,#1a1400,#0d0a00);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Fcraftlab-1.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Craftlab live site preview" loading="lazy" />
+        <span>Craftlab</span>
+      </div>
+      <div class="project-body">
+        <div class="project-type">E-Commerce / Shopify Storefront</div>
+        <div class="project-title">Craftlab</div>
+        <p class="project-desc">Custom Shopify storefront built with tailored Liquid sections and a clean, conversion-focused layout — styled and structured for a craft-goods brand's product catalog.</p>
+        <div class="project-tags">
+          <span class="project-tag">Shopify</span>
+          <span class="project-tag">Liquid</span>
+          <span class="project-tag">E-Commerce</span>
+        </div>
+        <div class="project-links">
+          <a href="https://craftlab-1.myshopify.com/" target="_blank" class="project-link primary"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3: Hungry Tiger -->
     <div class="project-card reveal-el">
       <div class="project-thumb" style="background: linear-gradient(135deg,#2a0d00,#1a0500);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Fwww.eathungrytiger.com%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Eat Hungry Tiger live site preview" loading="lazy" />
         <span>Hungry Tiger</span>
       </div>
       <div class="project-body">
@@ -859,9 +969,10 @@
       </div>
     </div>
 
-    <!-- 3: Dazzled -->
+    <!-- 4: Dazzled -->
     <div class="project-card reveal-el">
       <div class="project-thumb" style="background: linear-gradient(135deg,#180a2a,#0d0515);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Fdazzled-experiences-404294.framer.app%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Dazzled Experiences live site preview" loading="lazy" />
         <span>Dazzled</span>
       </div>
       <div class="project-body">
@@ -879,10 +990,11 @@
       </div>
     </div>
 
-    <!-- 4: Mystree -->
+    <!-- 5: Mystree -->
     <div class="project-card reveal-el">
-      <div class="project-thumb" style="background: linear-gradient(135deg,#001a1a,#000d0d);">
-        <span>Mystree</span>
+      <div class="project-thumb" style="background: linear-gradient(135deg,#001a1a,#000d0d); align-items:center; justify-content:center;">
+        <i class="fas fa-code" style="position:absolute; font-size:4.5rem; color:rgba(180,255,57,.1); z-index:0;"></i>
+        <span style="padding:0;">Mystree</span>
       </div>
       <div class="project-body">
         <div class="project-type">Full Stack App</div>
@@ -900,9 +1012,10 @@
       </div>
     </div>
 
-    <!-- 5: Musicacade -->
+    <!-- 6: Musicacade -->
     <div class="project-card reveal-el">
       <div class="project-thumb" style="background: linear-gradient(135deg,#001a08,#000d04);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Fmusicacade-my.netlify.app%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Musicacade live site preview" loading="lazy" />
         <span>Musicacade</span>
       </div>
       <div class="project-body">
@@ -920,9 +1033,10 @@
       </div>
     </div>
 
-    <!-- 6: Weather App -->
+    <!-- 7: Weather App -->
     <div class="project-card reveal-el">
       <div class="project-thumb" style="background: linear-gradient(135deg,#001a2e,#000d18);">
+        <img src="https://api.microlink.io/?url=https%3A%2F%2Freact-weatherapp-js.netlify.app%2F&screenshot=true&meta=false&embed=screenshot.url" alt="Weather App live site preview" loading="lazy" />
         <span>Weather App</span>
       </div>
       <div class="project-body">
@@ -943,6 +1057,77 @@
   </div>
 </section>
 </div>
+
+<!-- ═══════════════════════════════════ AUTOMATION ═══════════════════════════════════ -->
+<section id="automation">
+  <p class="section-label reveal-el">// Workflow Automation</p>
+  <h2 class="section-title reveal-el">Systems I've Automated</h2>
+  <div class="section-divider reveal-el"></div>
+
+  <div class="automation-grid">
+
+    <!-- Automation 1: Ad Reporting -->
+    <div class="automation-card">
+      <div class="automation-flow">
+        <span class="step">Meta Ads</span><span class="arrow">→</span>
+        <span class="step">Flexi Leads</span><span class="arrow">→</span>
+        <span class="step">Apps Script</span><span class="arrow">→</span>
+        <span class="step">Pabbly</span><span class="arrow">→</span>
+        <span class="step">Email</span>
+      </div>
+      <div class="automation-title">Multi-Client Daily Ad Reporting System</div>
+      <p class="project-desc" style="margin-bottom:1rem;">
+        Built for 13 client accounts running independently with complete client-wise data isolation — eliminating repetitive manual ad-reporting work.
+      </p>
+      <ul class="automation-points">
+        <li>Fetches daily Meta Ads data — spend and cost per landing page view — per client.</li>
+        <li>Integrates client-specific Flexi lead data and calculates daily leads &amp; CPL.</li>
+        <li>Generates daily reports: spend, leads, CPL, 7-day average CPL, cost per landing page view, balance left.</li>
+        <li>Consolidates every client report into a single Master Daily Report while keeping data isolated.</li>
+        <li>Checks Client ID + Date before writing, preventing duplicate entries and cross-client mixing.</li>
+        <li>Sends each client's report to the correct mapped recipient(s) automatically via Pabbly Connect.</li>
+      </ul>
+      <div class="automation-tags">
+        <span class="automation-tag">Google Sheets</span>
+        <span class="automation-tag">Google Apps Script</span>
+        <span class="automation-tag">Meta Ads API</span>
+        <span class="automation-tag">Pabbly Connect</span>
+        <span class="automation-tag">Flexi</span>
+      </div>
+    </div>
+
+    <!-- Automation 2: Certificate Automation -->
+    <div class="automation-card">
+      <div class="automation-flow">
+        <span class="step">Google Form</span><span class="arrow">→</span>
+        <span class="step">Sheets</span><span class="arrow">→</span>
+        <span class="step">Apps Script</span><span class="arrow">→</span>
+        <span class="step">Pabbly</span><span class="arrow">→</span>
+        <span class="step">Email</span>
+      </div>
+      <div class="automation-title">End-to-End Certificate Automation</div>
+      <p class="project-desc" style="margin-bottom:1rem;">
+        Automated certificate generation and delivery workflow, replacing a fully manual, repetitive process with a reliable and scalable one.
+      </p>
+      <ul class="automation-points">
+        <li>Collects participant details through Google Forms and stores responses in Google Sheets.</li>
+        <li>Processes participant data with Google Apps Script.</li>
+        <li>Generates personalized certificates from a predefined template.</li>
+        <li>Uses Pabbly Connect to automate the delivery workflow.</li>
+        <li>Emails the finished certificate to each participant automatically.</li>
+      </ul>
+      <div class="automation-tags">
+        <span class="automation-tag">Google Forms</span>
+        <span class="automation-tag">Google Sheets</span>
+        <span class="automation-tag">Google Apps Script</span>
+        <span class="automation-tag">Pabbly Connect</span>
+        <span class="automation-tag">Gmail</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <a href="resume.pdf" download class="resume-btn">
   <i class="fas fa-download"></i>
   <span>Resume</span>
@@ -967,9 +1152,13 @@
           <i class="fas fa-phone"></i>
           <div><strong>Phone</strong><span>+91 99290 46909</span></div>
         </a>
-        <a href="https://linkedin.com/in/akshay-sharma-062" target="_blank" class="contact-item reveal-el">
+        <a href="https://wa.me/919929046909" target="_blank" class="contact-item reveal-el">
+          <i class="fab fa-whatsapp"></i>
+          <div><strong>WhatsApp</strong><span>+91 99290 46909</span></div>
+        </a>
+        <a href="https://www.linkedin.com/in/akshay-sharma006/" target="_blank" class="contact-item reveal-el">
           <i class="fab fa-linkedin"></i>
-          <div><strong>LinkedIn</strong><span>linkedin.com/in/akshay-sharma-062</span></div>
+          <div><strong>LinkedIn</strong><span>linkedin.com/in/akshay-sharma006</span></div>
         </a>
         <a href="https://github.com/akshay-sharma062" target="_blank" class="contact-item reveal-el">
           <i class="fab fa-github"></i>
@@ -996,7 +1185,7 @@
           <label>Message</label>
           <textarea name="body" rows="5" placeholder="Tell me about your project..."></textarea>
         </div>
-        <button type="submit" class="btn-send">Send Message <i class="fas fa-paper-plane"></i></button>
+        <button type="submit" class="btn-send magnetic">Send Message <i class="fas fa-paper-plane"></i></button>
       </form>
     </div>
   </div>
@@ -1008,7 +1197,7 @@
   <div class="footer-copy">© 2026 · Designed &amp; Built by Akshay</div>
   <div class="footer-socials">
     <a href="https://github.com/akshay-sharma062" target="_blank"><i class="fab fa-github"></i></a>
-    <a href="https://linkedin.com/in/akshay-sharma-062" target="_blank"><i class="fab fa-linkedin"></i></a>
+    <a href="https://www.linkedin.com/in/akshay-sharma006/" target="_blank"><i class="fab fa-linkedin"></i></a>
     <a href="mailto:akshay.ku.sharma.062@gmail.com"><i class="fas fa-envelope"></i></a>
     <a href="https://wa.me/919929046909" target="_blank"><i class="fab fa-whatsapp"></i></a>
   </div>
@@ -1130,29 +1319,7 @@ function fireHeroAnimations() {
     .from('#h-btns', { y: 25, duration: 0.6 }, 1.0)
     .to('.hero-float', { opacity: 1, duration: 1.2, stagger: 0.15 }, 1.1)
     .to('#scrollHint', { opacity: 1, duration: 0.8 }, 1.6);
-      /* ── SCROLL PROGRESS BAR ── */
-gsap.to("#scrollProgress", {
-  height: "100%",
-  ease: "none",
-  scrollTrigger: {
-    trigger: document.body,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
 
-/* ── SVG BACKGROUND PARALLAX ── */
-gsap.to("#bg-svg", {
-  y: -150,
-  ease: "none",
-  scrollTrigger: {
-    trigger: document.body,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
 gsap.from(".resume-btn", {
   opacity: 0,
   y: 50,
@@ -1160,21 +1327,6 @@ gsap.from(".resume-btn", {
   delay: 0.5,
   ease: "power3.out"
 });
-/* Individual circle motion */
-gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
-  gsap.to(circle, {
-    y: (i + 1) * -80,
-    x: (i % 2 === 0 ? 60 : -60),
-    ease: "none",
-    scrollTrigger: {
-      trigger: document.body,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: true
-    }
-  });
-});
-
 
   // Floating elements parallax drift
   gsap.utils.toArray('.hero-float').forEach((el, i) => {
@@ -1187,46 +1339,28 @@ gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
       delay: i * 0.3,
     });
   });
-  const shapes = gsap.utils.toArray("#bg-svg *");
 
-// random float movement
-shapes.forEach((el, i) => {
-  gsap.to(el, {
-    x: "random(-120, 120)",
-    y: "random(-120, 120)",
-    duration: "random(6, 12)",
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut"
+  // Ambient shape life — rotation + scale only (no x/y, so it never fights the scroll-linked motion below)
+  gsap.utils.toArray("#bg-svg > *").forEach((el, i) => {
+    gsap.to(el, {
+      rotation: "random(-180,180)",
+      transformOrigin: "50% 50%",
+      duration: "random(14, 24)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+    gsap.to(el, {
+      scale: "random(0.85, 1.25)",
+      transformOrigin: "50% 50%",
+      duration: "random(6, 10)",
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      delay: i * 0.3
+    });
   });
 
-  // rotation
-  gsap.to(el, {
-    rotation: "random(-180,180)",
-    duration: "random(10, 20)",
-    repeat: -1,
-    ease: "none"
-  });
-
-  // scale pulse
-  gsap.to(el, {
-    scale: "random(0.8, 1.3)",
-    duration: "random(4, 8)",
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut"
-  });
-});
-gsap.to("#bg-svg", {
-  y: -200,
-  ease: "none",
-  scrollTrigger: {
-    trigger: document.body,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
   // Scroll hint fade out on scroll
   ScrollTrigger.create({
     trigger: '#hero',
@@ -1254,7 +1388,7 @@ function initScrollAnimations() {
       moveDot(e.clientX); moveDotY(e.clientY);
       moveRing(e.clientX); moveRingY(e.clientY);
     });
-    document.querySelectorAll('a, button, .skill-tag, .project-card').forEach(el => {
+    document.querySelectorAll('a, button, .skill-tag, .project-card, .automation-card').forEach(el => {
       el.addEventListener('mouseenter', () => {
         gsap.to(ring, { scale: 2.2, borderColor: 'var(--accent)', duration: 0.3 });
         gsap.to(dot,  { scale: 0, duration: 0.2 });
@@ -1262,6 +1396,32 @@ function initScrollAnimations() {
       el.addEventListener('mouseleave', () => {
         gsap.to(ring, { scale: 1, borderColor: 'rgba(180,255,57,0.45)', duration: 0.3 });
         gsap.to(dot,  { scale: 1, duration: 0.2 });
+      });
+    });
+
+    // Magnetic buttons — subtle pull toward cursor on hover
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const relX = e.clientX - (r.left + r.width / 2);
+        const relY = e.clientY - (r.top + r.height / 2);
+        gsap.to(btn, { x: relX * 0.3, y: relY * 0.4, duration: 0.3, ease: 'power2.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+      });
+    });
+
+    // Card tilt — gentle 3D tilt following the cursor
+    document.querySelectorAll('.project-card, .automation-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(card, { rotateY: px * 6, rotateX: -py * 6, duration: 0.4, ease: 'power2.out', transformPerspective: 800 });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.6, ease: 'power3.out' });
       });
     });
   }
@@ -1309,6 +1469,21 @@ function initScrollAnimations() {
       onEnter: () => gsap.from('.project-card', { y: 50, opacity: 0, scale: 0.96, duration: 0.75, stagger: 0.1, ease: 'power3.out' })
     });
 
+    // Automation cards — curtain reveal + staggered inner content, triggered on scroll
+    gsap.utils.toArray('.automation-card').forEach((card) => {
+      gsap.set(card, { clipPath: 'inset(0 0 100% 0)', opacity: 0 });
+      ScrollTrigger.create({
+        trigger: card, start: 'top 82%', once: true,
+        onEnter: () => {
+          card.classList.add('in-view');
+          gsap.to(card, { clipPath: 'inset(0 0 0% 0)', opacity: 1, duration: 0.9, ease: 'power4.out' });
+          gsap.from(card.querySelectorAll('.automation-flow .step'), { scale: 0, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'back.out(2.4)', delay: 0.35 });
+          gsap.from(card.querySelectorAll('.automation-points li'), { x: -24, opacity: 0, duration: 0.5, stagger: 0.07, delay: 0.7, ease: 'power2.out' });
+          gsap.from(card.querySelectorAll('.automation-tag'), { y: 10, opacity: 0, duration: 0.4, stagger: 0.04, delay: 1.1, ease: 'power2.out' });
+        }
+      });
+    });
+
     // Timeline items slide in from left
     gsap.utils.toArray('.timeline-item').forEach(item => {
       gsap.from(item, {
@@ -1350,43 +1525,38 @@ function initScrollAnimations() {
     tag.addEventListener('mouseleave', () => gsap.to(tag, { scale: 1, duration: 0.2 }));
   });
   /* ── SCROLL PROGRESS BAR ── */
-gsap.to("#scrollProgress", {
-  height: "100%",
-  ease: "none",
-  scrollTrigger: {
-    trigger: document.body,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
-
-/* ── SVG BACKGROUND PARALLAX ── */
-gsap.to("#bg-svg", {
-  y: -150,
-  ease: "none",
-  scrollTrigger: {
-    trigger: document.body,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true
-  }
-});
-
-/* Individual circle motion */
-gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
-  gsap.to(circle, {
-    y: (i + 1) * -80,
-    x: (i % 2 === 0 ? 60 : -60),
+  gsap.to("#scrollProgress", {
+    height: "100%",
     ease: "none",
-    scrollTrigger: {
-      trigger: document.body,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: true
-    }
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: true }
   });
-});
+
+  /* ── SVG BACKGROUND — ONE master scroll-linked motion so it always visibly reacts ── */
+  gsap.to("#bg-svg", {
+    y: -260,
+    rotation: 10,
+    scale: 1.18,
+    transformOrigin: "50% 50%",
+    ease: "none",
+    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6 }
+  });
+
+  /* Each shape drifts a bit further apart from the group as you scroll, on top of the group move */
+  gsap.utils.toArray("#bg-svg circle").forEach((circle, i) => {
+    gsap.to(circle, {
+      y: (i + 1) * -90,
+      x: (i % 2 === 0 ? 70 : -70),
+      ease: "none",
+      scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6 }
+    });
+  });
+  gsap.utils.toArray("#bg-svg rect, #bg-svg polygon").forEach((el, i) => {
+    gsap.to(el, {
+      y: (i % 2 === 0 ? -60 : 60),
+      ease: "none",
+      scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.6 }
+    });
+  });
 }
 
 // closeMobile needed for mobile menu links
