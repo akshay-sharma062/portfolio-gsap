@@ -1416,6 +1416,20 @@ header{
   color:#fff;
 }
 
+
+.project-clickable{
+  cursor:pointer;
+}
+
+.project-clickable:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:5px;
+}
+
+.project-clickable .project-arrow{
+  position:relative;
+}
+
 /* =========================
    AUTOMATION
 ========================= */
@@ -2844,7 +2858,7 @@ footer{
 
       <!-- PROJECT 01 -->
 
-      <article class="project">
+      <article class="project project-clickable" data-url="https://imperial-essence-k-c.myshopify.com/" tabindex="0" role="link" aria-label="Open Imperial Essence project">
 
         <div class="project-index">
           01
@@ -2895,7 +2909,7 @@ footer{
 
       <!-- PROJECT 02 -->
 
-      <article class="project">
+      <article class="project project-clickable" data-url="https://craftlab-1.myshopify.com/" tabindex="0" role="link" aria-label="Open Craftlab project">
 
         <div class="project-index">
           02
@@ -2945,7 +2959,7 @@ footer{
 
       <!-- PROJECT 03 -->
 
-      <article class="project">
+      <article class="project project-clickable" data-url="https://www.eathungrytiger.com/" tabindex="0" role="link" aria-label="Open Hungry Tiger project">
 
         <div class="project-index">
           03
@@ -2996,7 +3010,7 @@ footer{
 
       <!-- PROJECT 04 -->
 
-      <article class="project">
+      <article class="project project-clickable" data-url="https://dazzled-experiences-404294.framer.app/" tabindex="0" role="link" aria-label="Open Dazzled Experiences project">
 
         <div class="project-index">
           04
@@ -4129,62 +4143,33 @@ function projectFolding(){
 
 
   /*
-    Little floating 3D movement based
-    on mouse position.
+    Lightweight 3D hover only on the currently visible card.
+    This avoids fighting the folding ScrollTrigger and keeps
+    the project section smooth.
   */
-
   if(!coarse){
+    stage.addEventListener("mousemove", e=>{
+      const active = cards.find(card => getComputedStyle(card).opacity > .85);
+      if(!active) return;
 
-    stage.addEventListener(
-      "mousemove",
-      e=>{
+      const rect = active.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - .5;
+      const y = (e.clientY - rect.top) / rect.height - .5;
 
-        const rect =
-          stage.getBoundingClientRect();
+      gsap.to(active,{
+        rotationY:x*1.8,
+        rotationX:-y*1.2,
+        duration:.45,
+        ease:"power3.out",
+        overwrite:false
+      });
+    });
 
-        const x =
-          (e.clientX-rect.left) /
-          rect.width -
-          .5;
-
-        const y =
-          (e.clientY-rect.top) /
-          rect.height -
-          .5;
-
-
-        gsap.to(
-          cards,
-          {
-            rotationY:x*3,
-            rotationX:-y*2,
-            duration:.7,
-            ease:"power3.out",
-            overwrite:"auto"
-          }
-        );
-
-      }
-    );
-
-
-    stage.addEventListener(
-      "mouseleave",
-      ()=>{
-
-        gsap.to(
-          cards,
-          {
-            rotationY:0,
-            rotationX:0,
-            duration:.8,
-            ease:"power3.out"
-          }
-        );
-
-      }
-    );
-
+    stage.addEventListener("mouseleave",()=>{
+      cards.forEach(card=>{
+        gsap.to(card,{rotationY:0,rotationX:0,duration:.5,ease:"power3.out",overwrite:false});
+      });
+    });
   }
 
 }
@@ -4195,44 +4180,17 @@ function projectFolding(){
 ========================= */
 
 function projectParallax(){
-
+  /*
+     Intentionally kept lightweight.
+     The project folding timeline owns the card transforms;
+     a second ScrollTrigger on the images caused transform
+     contention and made the section feel laggy.
+  */
   if(reduce) return;
 
-
-  document
-    .querySelectorAll(
-      ".project-image img"
-    )
-    .forEach(img=>{
-
-      gsap.fromTo(
-        img,
-
-        {
-          yPercent:7,
-          scale:1.1
-        },
-
-        {
-          yPercent:-7,
-          scale:1,
-
-          ease:"none",
-
-          scrollTrigger:{
-            trigger:img,
-
-            start:"top bottom",
-            end:"bottom top",
-
-            scrub:1.2
-          }
-
-        }
-      );
-
-    });
-
+  document.querySelectorAll(".project-image img").forEach(img=>{
+    gsap.set(img,{scale:1.035,yPercent:0});
+  });
 }
 
 
@@ -4522,6 +4480,32 @@ function progress(){
 
 }
 
+
+/* =========================
+   PROJECT NAVIGATION
+========================= */
+
+function projectLinks(){
+  document.querySelectorAll(".project-clickable").forEach(card=>{
+    const url=card.dataset.url;
+    if(!url) return;
+
+    const open=()=>window.open(url,"_blank","noopener,noreferrer");
+
+    card.addEventListener("click",e=>{
+      /* Do not steal clicks from future real links/buttons inside a card. */
+      if(e.target.closest("a,button")) return;
+      open();
+    });
+
+    card.addEventListener("keydown",e=>{
+      if(e.key==="Enter" || e.key===" "){
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+}
 
 /* =========================
    INIT
