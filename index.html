@@ -1134,118 +1134,81 @@ header{
 }
 
 /* =========================
-   PROJECT SECTION
+   PROJECT SECTION — SCROLL SLIDER
 ========================= */
 
 #work{
   position:relative;
 }
 
-/*
-   IMPORTANT:
-   This wrapper becomes the sticky stage.
-   The individual cards move through the viewport.
-*/
-
 .work-top{
   display:flex;
-
   justify-content:space-between;
-
   gap:30px;
-
   align-items:end;
-
   margin-bottom:65px;
 }
 
 .work-note{
   max-width:430px;
-
   color:#817b73;
-
   font-size:13px;
-
   line-height:1.7;
 }
 
+/*
+  The section behaves like a horizontal slider controlled by
+  vertical scrolling. The stage stays pinned while each project
+  slides into view. After the final card, normal page scrolling
+  continues into the next section.
+*/
 .work-list{
   position:relative;
-
+  height:600vh;
   border-top:1px solid rgba(238,233,223,.18);
-
-  /*
-    Enough vertical room for GSAP card folding.
-  */
-  height:500vh;
 }
-
-/* Sticky project viewport */
 
 .project-stage{
   position:sticky;
-
   top:78px;
-
   height:calc(100vh - 78px);
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  perspective:1600px;
-
+  display:block;
   overflow:hidden;
+  perspective:1600px;
+}
+
+.project-track{
+  height:100%;
+  width:600%;
+  display:flex;
+  will-change:transform;
 }
 
 .project{
-  position:absolute;
-
-  width:100%;
-
+  position:relative;
+  flex:0 0 16.6666667%;
+  width:16.6666667%;
   height:min(70vh,650px);
-
+  align-self:center;
   display:grid;
-
   grid-template-columns:90px 1fr 1fr;
-
   border:1px solid rgba(238,233,223,.18);
-
   background:var(--ink);
-
   overflow:hidden;
-
-  transform-origin:center top;
-
-  will-change:transform,opacity,filter;
-
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.18);
-
+  transform-origin:center center;
+  will-change:transform,opacity;
+  box-shadow:0 30px 90px rgba(0,0,0,.18);
   transition:none;
 }
 
-/*
-   Cards remain the same visual design.
-*/
-
 .project:before{
   content:"";
-
   position:absolute;
-
   inset:0;
-
   background:var(--accent);
-
   transform:scaleY(0);
-
   transform-origin:bottom;
-
   transition:.65s cubic-bezier(.16,1,.3,1);
-
   z-index:0;
 }
 
@@ -1260,31 +1223,22 @@ header{
 
 .project-index{
   padding:27px 0;
-
   font:9px var(--mono);
-
   color:#777;
 }
 
 .project-image{
   margin:24px 24px 24px 0;
-
   overflow:hidden;
-
   background:#26231f;
-
   min-height:370px;
-
   position:relative;
 }
 
 .project-image:after{
   content:"";
-
   position:absolute;
-
   inset:0;
-
   background:
     linear-gradient(
       120deg,
@@ -1292,9 +1246,7 @@ header{
       rgba(255,255,255,.08) 50%,
       transparent 70%
     );
-
   transform:translateX(-120%);
-
   transition:1s ease;
 }
 
@@ -1305,44 +1257,30 @@ header{
 .project-image img{
   width:100%;
   height:100%;
-
   object-fit:cover;
-
   display:block;
-
   filter:saturate(.75);
-
   transform:scale(1.06);
-
-  transition:
-    1s cubic-bezier(.16,1,.3,1);
+  transition:1s cubic-bezier(.16,1,.3,1);
 }
 
 .project:hover .project-image img{
   transform:scale(1.01);
-
   filter:saturate(1);
 }
 
 .project-info{
   padding:65px 6vw 50px 3vw;
-
   display:flex;
-
   flex-direction:column;
-
   justify-content:center;
 }
 
 .project-type{
   font:8px var(--mono);
-
   text-transform:uppercase;
-
   letter-spacing:.14em;
-
   color:#8e8982;
-
   margin-bottom:18px;
 }
 
@@ -1352,21 +1290,15 @@ header{
 
 .project h3{
   font:700 clamp(3rem,6vw,7rem)/.76 var(--serif);
-
   letter-spacing:-.1em;
-
   text-transform:uppercase;
-
   margin:0 0 24px;
 }
 
 .project p{
   max-width:570px;
-
   color:#88827a;
-
   font-size:13px;
-
   line-height:1.75;
 }
 
@@ -1376,46 +1308,34 @@ header{
 
 .project-meta{
   display:flex;
-
   flex-wrap:wrap;
-
   gap:7px;
-
   margin-top:25px;
 }
 
 .project-meta span{
   font:8px var(--mono);
-
   padding:8px 9px;
-
   border:1px solid rgba(238,233,223,.18);
-
   text-transform:uppercase;
 }
 
 .project:hover .project-meta span{
   border-color:rgba(255,255,255,.4);
-
   color:#fff;
 }
 
 .project-arrow{
   font:35px var(--serif);
-
   align-self:flex-end;
-
   margin-top:30px;
-
   transition:.45s;
 }
 
 .project:hover .project-arrow{
   transform:translate(8px,-8px);
-
   color:#fff;
 }
-
 
 .project-clickable{
   cursor:pointer;
@@ -1424,10 +1344,6 @@ header{
 .project-clickable:focus-visible{
   outline:2px solid var(--accent);
   outline-offset:5px;
-}
-
-.project-clickable .project-arrow{
-  position:relative;
 }
 
 /* =========================
@@ -1804,19 +1720,19 @@ footer{
 
   .project-stage{
     top:66px;
-
     height:calc(100vh - 66px);
   }
 
+  .project-track{
+    width:600%;
+  }
+
   .project{
-    width:92vw;
-
-    height:auto;
-    min-height:70vh;
-
+    flex-basis:16.6666667%;
+    width:16.6666667%;
+    height:78vh;
     grid-template-columns:55px 1fr;
-
-    overflow:hidden;
+    align-self:center;
   }
 
   .project-index{
@@ -1825,17 +1741,15 @@ footer{
 
   .project-image{
     grid-column:2;
-
     margin:20px 25px 0 0;
-
     min-height:270px;
   }
 
   .project-info{
     grid-column:2;
-
     padding:30px 25px 45px 0;
   }
+
 
   .auto-grid{
     grid-template-columns:1fr;
@@ -1922,47 +1836,39 @@ footer{
 
   .project-stage{
     top:66px;
-
     height:calc(100vh - 66px);
   }
 
   .project{
-    width:90vw;
-
     height:72vh;
-
     min-height:0;
-
     grid-template-columns:38px 1fr;
+  }
+
+  .project-index{
+    grid-row:1 / span 2;
   }
 
   .project-image{
     grid-column:2;
-
     margin:15px 18px 0 0;
-
     min-height:220px;
-
     max-height:29vh;
   }
 
   .project-info{
     grid-column:2;
-
     padding:22px 18px 25px 0;
-
     justify-content:flex-start;
   }
 
   .project h3{
     font-size:14vw;
-
     margin-bottom:15px;
   }
 
   .project p{
     font-size:11px;
-
     line-height:1.6;
   }
 
@@ -1973,6 +1879,7 @@ footer{
   .project-arrow{
     display:none;
   }
+
 
   .auto-card{
     padding:24px;
@@ -2835,7 +2742,7 @@ footer{
 
       A selection of storefronts, product experiences,
       marketing pages and full-stack applications.
-      Scroll, unfold and explore.
+      Scroll to slide through the work.
 
     </div>
 
@@ -2843,284 +2750,350 @@ footer{
 
 
   <!--
-      PROJECT SCROLL STAGE
+      SCROLL CONTROLLED PROJECT SLIDER
 
-      This is the important part.
-
-      The stage stays sticky while the cards
-      fold / stack / move through it.
+      Vertical scrolling drives the horizontal project track.
+      Once the last project reaches the viewport, the sticky stage
+      ends and the next section continues naturally.
   -->
 
   <div class="work-list" id="projectScroller">
 
     <div class="project-stage">
 
-
-      <!-- PROJECT 01 -->
-
-      <article class="project project-clickable" data-url="https://imperial-essence-k-c.myshopify.com/" tabindex="0" role="link" aria-label="Open Imperial Essence project">
-
-        <div class="project-index">
-          01
-        </div>
-
-        <div class="project-image">
-
-          <img
-            src="https://api.microlink.io/?url=https%3A%2F%2Fimperial-essence-k-c.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url"
-            alt="Imperial Essence"
-          >
-
-        </div>
-
-        <div class="project-info">
-
-          <div class="project-type">
-            E-commerce / Shopify
-          </div>
-
-          <h3>
-            Imperial<br>
-            Essence
-          </h3>
-
-          <p>
-            Custom Shopify storefront for a luxury fragrance brand.
-            Dynamic Liquid sections, customized theme layouts and
-            third-party integrations for a premium shopping experience.
-          </p>
-
-          <div class="project-meta">
-
-            <span>Shopify</span>
-            <span>Liquid</span>
-            <span>E-commerce</span>
-
-          </div>
-
-          <div class="project-arrow">
-            ↗
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <!-- PROJECT 02 -->
-
-      <article class="project project-clickable" data-url="https://craftlab-1.myshopify.com/" tabindex="0" role="link" aria-label="Open Craftlab project">
-
-        <div class="project-index">
-          02
-        </div>
-
-        <div class="project-image">
-
-          <img
-            src="https://api.microlink.io/?url=https%3A%2F%2Fcraftlab-1.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url"
-            alt="Craftlab"
-          >
-
-        </div>
-
-        <div class="project-info">
-
-          <div class="project-type">
-            E-commerce / Shopify
-          </div>
-
-          <h3>
-            Craft<br>
-            lab
-          </h3>
-
-          <p>
-            Tailored Shopify storefront with custom Liquid sections
-            and a clean conversion-focused product catalogue experience.
-          </p>
-
-          <div class="project-meta">
-
-            <span>Shopify</span>
-            <span>Liquid</span>
-            <span>UX</span>
-
-          </div>
-
-          <div class="project-arrow">
-            ↗
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <!-- PROJECT 03 -->
-
-      <article class="project project-clickable" data-url="https://www.eathungrytiger.com/" tabindex="0" role="link" aria-label="Open Hungry Tiger project">
-
-        <div class="project-index">
-          03
-        </div>
-
-        <div class="project-image">
-
-          <img
-            src="https://api.microlink.io/?url=https%3A%2F%2Fwww.eathungrytiger.com%2F&screenshot=true&meta=false&embed=screenshot.url"
-            alt="Eat Hungry Tiger"
-          >
-
-        </div>
-
-        <div class="project-info">
-
-          <div class="project-type">
-            Restaurant website
-          </div>
-
-          <h3>
-            Hungry<br>
-            Tiger
-          </h3>
-
-          <p>
-            Restaurant experience with menu storytelling,
-            responsive visual hierarchy and mobile-first
-            interaction design.
-          </p>
-
-          <div class="project-meta">
-
-            <span>Web Design</span>
-            <span>Responsive</span>
-            <span>UI/UX</span>
-
-          </div>
-
-          <div class="project-arrow">
-            ↗
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <!-- PROJECT 04 -->
-
-      <article class="project project-clickable" data-url="https://dazzled-experiences-404294.framer.app/" tabindex="0" role="link" aria-label="Open Dazzled Experiences project">
-
-        <div class="project-index">
-          04
-        </div>
-
-        <div class="project-image">
-
-          <img
-            src="https://api.microlink.io/?url=https%3A%2F%2Fdazzled-experiences-404294.framer.app%2F&screenshot=true&meta=false&embed=screenshot.url"
-            alt="Dazzled Experiences"
-          >
-
-        </div>
-
-        <div class="project-info">
-
-          <div class="project-type">
-            Marketing / Framer
-          </div>
-
-          <h3>
-            Dazzled<br>
-            Experiences
-          </h3>
-
-          <p>
-            High-fidelity animated marketing page with immersive
-            scroll interactions and a polished visual identity.
-          </p>
-
-          <div class="project-meta">
-
-            <span>Framer</span>
-            <span>Animations</span>
-            <span>Landing Page</span>
-
-          </div>
-
-          <div class="project-arrow">
-            ↗
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <!-- PROJECT 05 -->
-
-      <article class="project">
-
-        <div class="project-index">
-          05
-        </div>
-
-        <div
-          class="project-image"
-          style="
-            display:grid;
-            place-items:center;
-            background:#25211d;
-          "
+      <div class="project-track">
+
+        <!-- PROJECT 01 -->
+        <article
+          class="project project-clickable"
+          data-url="https://imperial-essence-k-c.myshopify.com/"
+          tabindex="0"
+          role="link"
+          aria-label="Open Imperial Essence project"
         >
 
+          <div class="project-index">
+            01
+          </div>
+
+          <div class="project-image">
+            <img
+              src="https://api.microlink.io/?url=https%3A%2F%2Fimperial-essence-k-c.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url"
+              alt="Imperial Essence live site preview"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="project-info">
+
+            <div class="project-type">
+              E-commerce / Shopify Storefront
+            </div>
+
+            <h3>
+              Imperial<br>
+              Essence
+            </h3>
+
+            <p>
+              Custom Shopify storefront for a luxury fragrance brand.
+              Developed dynamic sections, customized Liquid theme layouts,
+              and integrated third-party apps for a premium shopping experience.
+            </p>
+
+            <div class="project-meta">
+              <span>Shopify</span>
+              <span>Liquid</span>
+              <span>E-commerce</span>
+              <span>Theme Dev</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://imperial-essence-k-c.myshopify.com/">↗</a>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- PROJECT 02 -->
+        <article
+          class="project project-clickable"
+          data-url="https://craftlab-1.myshopify.com/"
+          tabindex="0"
+          role="link"
+          aria-label="Open Craftlab project"
+        >
+
+          <div class="project-index">
+            02
+          </div>
+
+          <div class="project-image">
+            <img
+              src="https://api.microlink.io/?url=https%3A%2F%2Fcraftlab-1.myshopify.com%2F&screenshot=true&meta=false&embed=screenshot.url"
+              alt="Craftlab live site preview"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="project-info">
+
+            <div class="project-type">
+              E-commerce / Shopify Storefront
+            </div>
+
+            <h3>
+              Craft<br>
+              lab
+            </h3>
+
+            <p>
+              Custom Shopify storefront built with tailored Liquid sections
+              and a clean, conversion-focused layout — styled and structured
+              for a craft-goods brand's product catalog.
+            </p>
+
+            <div class="project-meta">
+              <span>Shopify</span>
+              <span>Liquid</span>
+              <span>E-commerce</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://craftlab-1.myshopify.com/">↗</a>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- PROJECT 03 -->
+        <article
+          class="project project-clickable"
+          data-url="https://www.eathungrytiger.com/"
+          tabindex="0"
+          role="link"
+          aria-label="Open Eat Hungry Tiger project"
+        >
+
+          <div class="project-index">
+            03
+          </div>
+
+          <div class="project-image">
+            <img
+              src="https://api.microlink.io/?url=https%3A%2F%2Fwww.eathungrytiger.com%2F&screenshot=true&meta=false&embed=screenshot.url"
+              alt="Eat Hungry Tiger live site preview"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="project-info">
+
+            <div class="project-type">
+              Restaurant Website
+            </div>
+
+            <h3>
+              Hungry<br>
+              Tiger
+            </h3>
+
+            <p>
+              Full restaurant website with menu showcase, brand storytelling,
+              and smooth responsive design. Focused on visual hierarchy
+              and mobile-first UX for maximum engagement.
+            </p>
+
+            <div class="project-meta">
+              <span>Web Design</span>
+              <span>Responsive</span>
+              <span>UI/UX</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://www.eathungrytiger.com/">↗</a>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- PROJECT 04 -->
+        <article
+          class="project project-clickable"
+          data-url="https://dazzled-experiences-404294.framer.app/"
+          tabindex="0"
+          role="link"
+          aria-label="Open Dazzled Experiences project"
+        >
+
+          <div class="project-index">
+            04
+          </div>
+
+          <div class="project-image">
+            <img
+              src="https://api.microlink.io/?url=https%3A%2F%2Fdazzled-experiences-404294.framer.app%2F&screenshot=true&meta=false&embed=screenshot.url"
+              alt="Dazzled Experiences live site preview"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="project-info">
+
+            <div class="project-type">
+              Marketing / Landing Page
+            </div>
+
+            <h3>
+              VMF<br>
+              Technologies
+            </h3>
+
+            <p>
+              High-fidelity animated marketing page built in Framer.
+              Immersive scroll animations and a polished visual identity
+              for an experiences brand.
+            </p>
+
+            <div class="project-meta">
+              <span>Framer</span>
+              <span>Animations</span>
+              <span>Landing Page</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://dazzled-experiences-404294.framer.app/">↗</a>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- PROJECT 05 -->
+        <article
+          class="project project-clickable"
+          data-url="https://github.com/akshay-sharma062"
+          tabindex="0"
+          role="link"
+          aria-label="Open Mystree Messages GitHub project"
+        >
+
+          <div class="project-index">
+            05
+          </div>
+
           <div
+            class="project-image"
             style="
-              font:700 clamp(4rem,9vw,9rem)/.7 var(--serif);
-              letter-spacing:-.1em;
-              color:var(--accent);
+              display:grid;
+              place-items:center;
+              background:#25211d;
             "
           >
-            M.
+            <div
+              style="
+                font:700 clamp(4rem,9vw,9rem)/.7 var(--serif);
+                letter-spacing:-.1em;
+                color:var(--accent);
+              "
+            >
+              M.
+            </div>
           </div>
 
-        </div>
+          <div class="project-info">
 
+            <div class="project-type">
+              Full Stack App
+            </div>
 
-        <div class="project-info">
+            <h3>
+              Mystree<br>
+              Messages
+            </h3>
 
-          <div class="project-type">
-            Full Stack App
+            <p>
+              Anonymous messaging app with NextAuth OTP verification,
+              session management, Nodemailer email delivery, Zod form validation,
+              and AI-powered message suggestions.
+            </p>
+
+            <div class="project-meta">
+              <span>Next.js</span>
+              <span>MongoDB</span>
+              <span>NextAuth</span>
+              <span>Zod</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://github.com/akshay-sharma062">↗</a>
+            </div>
+
           </div>
 
-          <h3>
-            Mystree<br>
-            Messages
-          </h3>
+        </article>
 
-          <p>
-            Anonymous messaging app with NextAuth OTP verification,
-            session management, Nodemailer delivery, Zod validation
-            and AI-powered message suggestions.
-          </p>
 
-          <div class="project-meta">
+        <!-- PROJECT 06 -->
+        <article
+          class="project project-clickable"
+          data-url="https://musicacade-my.netlify.app/"
+          tabindex="0"
+          role="link"
+          aria-label="Open Musicacade project"
+        >
 
-            <span>Next.js</span>
-            <span>MongoDB</span>
-            <span>NextAuth</span>
+          <div class="project-index">
+            06
+          </div>
+
+          <div class="project-image">
+            <img
+              src="https://api.microlink.io/?url=https%3A%2F%2Fmusicacade-my.netlify.app%2F&screenshot=true&meta=false&embed=screenshot.url"
+              alt="Musicacade live site preview"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="project-info">
+
+            <div class="project-type">
+              Frontend / React App
+            </div>
+
+            <h3>
+              Music<br>
+              acade
+            </h3>
+
+            <p>
+              Interactive music-themed web app with smooth page transitions
+              and scroll animations. Optimized bundle performance, deployed
+              on Netlify with continuous deployment from GitHub.
+            </p>
+
+            <div class="project-meta">
+              <span>React</span>
+              <span>Framer Motion</span>
+              <span>Netlify</span>
+            </div>
+
+            <div class="project-arrow">
+              <a href="https://musicacade-my.netlify.app/">↗</a>
+            </div>
 
           </div>
 
-          <div class="project-arrow">
-            ↗
-          </div>
+        </article>
 
-        </div>
-
-      </article>
-
+      </div>
 
     </div>
 
@@ -3891,285 +3864,196 @@ function revealSections(){
 
 
 /* =========================
-   PROJECT FOLDING SYSTEM
+   PROJECT SCROLL SLIDER
 ========================= */
 
-function projectFolding(){
+function projectSlider(){
 
   const scroller =
     document.getElementById(
       "projectScroller"
     );
 
+  if(!scroller) return;
+
   const stage =
     scroller.querySelector(
       ".project-stage"
     );
 
+  const track =
+    scroller.querySelector(
+      ".project-track"
+    );
+
   const cards =
-    [...stage.querySelectorAll(
+    [...scroller.querySelectorAll(
       ".project"
     )];
 
+  if(!stage || !track || !cards.length) return;
 
-  if(!cards.length) return;
-
-
-  /* Mobile gets a lighter version */
-
-  const mobile =
-    window.innerWidth <= 900;
-
-
+  /*
+    Reduced motion:
+    keep the projects usable without the
+    scroll-driven transform.
+  */
   if(reduce){
 
-    cards.forEach((card,i)=>{
+    track.style.transform = "none";
 
-      card.style.transform =
-        `translateY(${i*10}px)`;
-
-      card.style.opacity =
-        i===cards.length-1 ? 1 : .5;
-
+    cards.forEach(card=>{
+      card.style.opacity = "1";
+      card.style.transform = "none";
     });
 
     return;
-
   }
 
-
   /*
-    Initial stack.
-
-    First card on top.
+    The track is 600% wide for six projects.
+    One viewport of vertical scroll = one project step.
+    The final project remains visible at the end,
+    then the sticky stage releases naturally.
   */
 
-  cards.forEach((card,i)=>{
-
-    gsap.set(
-      card,
+  const sliderTween =
+    gsap.to(
+      track,
       {
-        zIndex:
-          cards.length-i,
-
-        y:
-          i===0
-            ? 0
-            : 45 + i*14,
-
-        scale:
-          i===0
-            ? 1
-            : 1 - i*.035,
-
-        rotateX:
-          i===0
-            ? 0
-            : 5,
-
-        rotateZ:
-          i===0
-            ? 0
-            : i%2
-              ? -1.2
-              : 1.2,
-
-        opacity:
-          i===0
-            ? 1
-            : Math.max(
-                .18,
-                1-i*.16
-              ),
-
-        filter:
-          i===0
-            ? "blur(0px)"
-            : `blur(${i*.7}px)`,
-
-        transformOrigin:
-          "center top"
+        xPercent:-83.3333333,
+        ease:"none",
+        paused:true
       }
     );
 
+  ScrollTrigger.create({
+    animation:sliderTween,
+    trigger:scroller,
+    start:"top top",
+    end:"bottom bottom",
+    scrub:1,
+    invalidateOnRefresh:true
   });
 
-
   /*
-    One continuous timeline.
-
-    Every card:
-    1. lifts
-    2. rotates
-    3. folds toward top
-    4. scales down
-    5. disappears
-    6. next card comes forward
+    Subtle depth while sliding:
+    the active card stays clean while the
+    neighbouring cards get a tiny scale/opacity shift.
   */
-
-  const tl =
-    gsap.timeline();
-
 
   cards.forEach((card,i)=>{
 
-    const next =
-      cards[i+1];
+    gsap.set(card,{
+      scale:1,
+      opacity:1
+    });
 
+    ScrollTrigger.create({
+      trigger:scroller,
+      start:()=>`${i * window.innerHeight}px top`,
+      end:()=>`${(i + 1) * window.innerHeight}px top`,
+      scrub:true,
+      onUpdate:self=>{
 
-    if(!next) return;
+        const progress = self.progress;
 
+        if(i > 0){
+          gsap.set(card,{
+            scale:0.96 + progress * 0.04,
+            opacity:0.78 + progress * 0.22
+          });
+        }else{
+          gsap.set(card,{
+            scale:1 - progress * 0.04,
+            opacity:1 - progress * 0.22
+          });
+        }
 
-    const currentStart =
-      i;
-
-
-    tl.to(
-      card,
-      {
-
-        yPercent:-118,
-
-        rotateX:
-          mobile
-            ? 0
-            : 58,
-
-        rotateZ:
-          i%2
-            ? -5
-            : 5,
-
-        scale:.72,
-
-        opacity:0,
-
-        filter:"blur(5px)",
-
-        duration:1,
-
-        ease:"power3.inOut"
-
-      },
-      currentStart
-    );
-
-
-    tl.to(
-      next,
-      {
-
-        y:0,
-
-        scale:1,
-
-        rotateX:0,
-
-        rotateZ:0,
-
-        opacity:1,
-
-        filter:"blur(0px)",
-
-        duration:1,
-
-        ease:"power3.out"
-
-      },
-      currentStart+.15
-    );
-
-
-    /*
-      Background cards subtly rise.
-    */
-
-    cards
-      .slice(i+2)
-      .forEach((back,index)=>{
-
-        tl.to(
-          back,
-          {
-
-            y:
-              35 +
-              index*12,
-
-            scale:
-              1 -
-              (index+1)*.035,
-
-            rotateZ:
-              (index%2
-                ? -1
-                : 1) *
-              (index+1),
-
-            opacity:
-              Math.max(
-                .22,
-                1-(index+2)*.15
-              ),
-
-            duration:.8,
-
-            ease:"power2.out"
-
-          },
-          currentStart+.15
-        );
-
-      });
+      }
+    });
 
   });
-
-
-  ScrollTrigger.create({
-
-    animation:tl,
-
-    trigger:scroller,
-
-    start:"top top",
-
-    end:"bottom bottom",
-
-    scrub:1.15,
-
-    invalidateOnRefresh:true
-
-  });
-
 
   /*
-    Lightweight 3D hover only on the currently visible card.
-    This avoids fighting the folding ScrollTrigger and keeps
-    the project section smooth.
+    Lightweight 3D hover on the visible card.
+    It does not touch the horizontal slider transform.
   */
   if(!coarse){
-    stage.addEventListener("mousemove", e=>{
-      const active = cards.find(card => getComputedStyle(card).opacity > .85);
-      if(!active) return;
 
-      const rect = active.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - .5;
-      const y = (e.clientY - rect.top) / rect.height - .5;
+    stage.addEventListener(
+      "mousemove",
+      e=>{
 
-      gsap.to(active,{
-        rotationY:x*1.8,
-        rotationX:-y*1.2,
-        duration:.45,
-        ease:"power3.out",
-        overwrite:false
-      });
-    });
+        const rect =
+          stage.getBoundingClientRect();
 
-    stage.addEventListener("mouseleave",()=>{
-      cards.forEach(card=>{
-        gsap.to(card,{rotationY:0,rotationX:0,duration:.5,ease:"power3.out",overwrite:false});
-      });
-    });
+        const localX =
+          (e.clientX - rect.left) /
+          rect.width - .5;
+
+        const localY =
+          (e.clientY - rect.top) /
+          rect.height - .5;
+
+        const scrollProgress =
+          ScrollTrigger.getAll()
+            .find(st =>
+              st.trigger === scroller
+            );
+
+        let index = 0;
+
+        if(scrollProgress){
+          index = Math.min(
+            cards.length - 1,
+            Math.round(
+              scrollProgress.progress *
+              (cards.length - 1)
+            )
+          );
+        }
+
+        const active = cards[index];
+
+        if(!active) return;
+
+        gsap.to(
+          active,
+          {
+            rotationY:localX * 1.6,
+            rotationX:-localY * 1.2,
+            duration:.4,
+            ease:"power3.out",
+            overwrite:"auto"
+          }
+        );
+
+      }
+    );
+
+    stage.addEventListener(
+      "mouseleave",
+      ()=>{
+
+        cards.forEach(card=>{
+
+          gsap.to(
+            card,
+            {
+              rotationY:0,
+              rotationX:0,
+              duration:.5,
+              ease:"power3.out",
+              overwrite:"auto"
+            }
+          );
+
+        });
+
+      }
+    );
+
   }
 
 }
@@ -4180,17 +4064,30 @@ function projectFolding(){
 ========================= */
 
 function projectParallax(){
+
   /*
-     Intentionally kept lightweight.
-     The project folding timeline owns the card transforms;
-     a second ScrollTrigger on the images caused transform
-     contention and made the section feel laggy.
+    Keep image treatment lightweight.
+    The project slider owns the card transform.
   */
+
   if(reduce) return;
 
-  document.querySelectorAll(".project-image img").forEach(img=>{
-    gsap.set(img,{scale:1.035,yPercent:0});
-  });
+  document
+    .querySelectorAll(
+      ".project-image img"
+    )
+    .forEach(img=>{
+
+      gsap.set(
+        img,
+        {
+          scale:1.035,
+          yPercent:0
+        }
+      );
+
+    });
+
 }
 
 
@@ -4521,7 +4418,7 @@ function init(){
 
   revealSections();
 
-  projectFolding();
+  projectSlider();
 
   projectParallax();
 
